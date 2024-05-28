@@ -1,0 +1,97 @@
+.banner {
+  position: relative;
+  height: 50vh;
+}
+
+
+.banner img {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  opacity: 0.5;
+}
+
+
+.banner-text {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(-50%,);
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  padding: 20px;
+  text-align: right;
+  border-radius: 10px;
+  white-space: nowrap; /* 텍스트가 한 줄로 나타나도록 설정 */
+}
+
+.features, .posts, .concerts, .analysis {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.features h2, .posts h2, .concerts h2, .analysis h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.icons, .post-cards, .concert-cards {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.icon, .post-card, .concert-card {
+  flex: 1;
+  margin: 10px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.icon {
+  background-color: #f0f0f0;
+}
+
+.icon:hover, .post-card:hover, .concert-card:hover {
+  background-color: #e0e0e0;
+}
+
+.analysis p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.analysis button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.analysis button:hover {
+  background-color: #45a049;
+}
+
+.footer {
+  background-color: #f0f0f0;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer .social-links a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: black;
+}

@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/TaveBand_FE_demo/static/css/main.bd72656b.css",
+    "main.js": "/TaveBand_FE_demo/static/js/main.e200a4c2.js",
+    "index.html": "/TaveBand_FE_demo/index.html",
+    "main.bd72656b.css.map": "/TaveBand_FE_demo/static/css/main.bd72656b.css.map",
+    "main.e200a4c2.js.map": "/TaveBand_FE_demo/static/js/main.e200a4c2.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bd72656b.css",
+    "static/js/main.e200a4c2.js"
+  ]
+}
