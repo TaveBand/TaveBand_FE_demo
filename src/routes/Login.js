@@ -52,7 +52,7 @@ function Login() {
     console.log("Password:", password);
 
     // 로그인 성공 시 다음 페이지로 이동
-    navigate("/home");
+    navigate("/");
   }
 
   return (
