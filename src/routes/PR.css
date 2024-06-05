@@ -1,0 +1,60 @@
+.PRBoards {
+  background-color: white;
+  height: 580px;
+  width: 1400px;
+  border-radius: 30px;
+  margin: auto;
+  margin-top: 20px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.25);
+  padding-top: 10px;
+}
+
+.PRpost {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px 10px;
+  width: 1200px;
+  margin: auto;
+  height: 440px;
+  margin-bottom: 40px;
+}
+.PRbox {
+  margin: auto;
+  background-color: rgb(204, 204, 204);
+  border-color: grey;
+  border-radius: 25px;
+  width: 23%;
+  height: 200px;
+  z-index: 1;
+  cursor: pointer;
+}
+.PRphoto {
+  width: 200px;
+  z-index: -1;
+  position: absolute;
+  margin-left: 40px;
+}
+.PRcontentbox {
+  background-color: rgb(255, 255, 255);
+  margin-top: 135px;
+  border-radius: 0 0 25px 25px;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
+}
+.PRcontentbox p {
+  color: grey;
+  margin-top: 5px;
+}
+
+.Sessioninfo {
+  margin: auto;
+  background-color: rgb(249, 249, 249);
+  width: 100px;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}

@@ -1,0 +1,60 @@
+* {
+  font-family: "Gothic A1", sans-serif;
+
+}
+.BoardPage {
+  background-color: rgb(249, 249, 249);
+  height: 100vh;
+}
+
+
+.Boards {
+    background-color: white;
+    height: 460px;
+    width: 1400px;
+    border-radius: 30px;
+    margin: auto;
+    margin-top: 20px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.25);
+}
+
+.Clubpost {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  justify-content: space-evenly;
+}
+.Postbox {
+  margin: 20px;
+  display: flex;
+  cursor: pointer;
+}
+.clubimg {
+  background-color: black;
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+  margin-right: 20px;
+}
+.contentbox {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  width: 1300px;
+}
+.Likebox {
+  display: flex;
+}
+.Likes {
+  width: 25px;
+}
+.Likenum {
+  color: rgb(245, 53, 76);
+  margin-top: auto;
+  margin-left: 5px;
+}
+.Posttime {
+  width: 155px;
+  margin-left: auto;
+  color: grey;
+}

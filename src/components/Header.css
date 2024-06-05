@@ -6,6 +6,7 @@
 .Headerwidth {
   width: 100vw;
   background-color: white;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
 }
 .Container {
   display: flex;
@@ -15,10 +16,13 @@
   width: 1500px;
   margin: auto;
   background-color: white;
+  
 }
 .Category_left {
   width: 500px;
   text-align: center;
+  background-color: white;
+  
 }
 .Category_left button {
   font-family: "Gothic A1", sans-serif;
@@ -28,17 +32,28 @@
   background-color: rgb(255, 255, 255);
   margin: 0 40px;
   cursor: pointer;
+  text-transform:uppercase;
 }
+.Category_left button:after {
+  display:block;
+  content: '';
+  border-bottom: solid 3px rgb(121, 186, 242);  
+  transform: scaleX(0);  
+  transition: transform 250ms ease-in-out;
+}
+.Category_left button:hover:after { transform: scaleX(1); }
 .Logo {
   font-family: "Gothic A1", sans-serif;
   font-size: 48px;
   font-weight: 900;
   cursor: pointer;
+  background-color: white;
 }
 
 .Category_right {
   width: 500px;
   text-align: center;
+  background-color: white;
 }
 .Category_right button {
   border: none;
@@ -59,6 +74,7 @@
   height: 30px;
   margin: 0 10px;
   width: 170px;
+  background-color: white;
 }
 .Search:focus {
   outline: none;

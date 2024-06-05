@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./Header.css";
@@ -10,9 +9,12 @@ function Header() {
     return;
   }
 
-
   function ToHome() {
     navigate("/");
+    return;
+  }
+  function ToBoards() {
+    navigate("/boards/clubs");
     return;
   }
   return (
@@ -20,7 +22,7 @@ function Header() {
       <div className="Container">
         <div className="Category_left">
           <button>세션</button>
-          <button>모집</button>
+          <button onClick={ToBoards}>모집</button>
           <button>연합공연</button>
           <button>음악분석</button>
         </div>
