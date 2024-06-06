@@ -65,7 +65,7 @@ function PRDetail() {
                     <p style={{ color: "grey" }}>{detail[0].created_at}</p>
                   </div>
                 </div>
-                                  <div className="DetailText">{detail[0].content}</div>
+                <div className="DetailText">{detail[0].content}</div>
               </>
             )
           )}

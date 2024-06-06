@@ -9,7 +9,7 @@
             "email": "tldms0507@naver.com",
             "sessions": [
                 {
-                    "session_id": "integer",
+                    "session_id": 5,
                     "session_info": "키보드",
                     "created_at": "2024.06.04"
                 }
@@ -24,8 +24,8 @@
             "email": "string",
             "sessions": [
                 {
-                    "session_id": "integer",
-                    "session_info": "strig",
+                    "session_id": 1,
+                    "session_info": "드럼",
                     "created_at": "timestamp"
                 }
             ]
@@ -39,8 +39,8 @@
             "email": "string",
             "sessions": [
                 {
-                    "session_id": "integer",
-                    "session_info": "strig",
+                    "session_id": 4,
+                    "session_info": "베이스",
                     "created_at": "timestamp"
                 }
             ]
@@ -54,8 +54,8 @@
             "email": "string",
             "sessions": [
                 {
-                    "session_id": "integer",
-                    "session_info": "strig",
+                    "session_id": 5,
+                    "session_info": "키보드",
                     "created_at": "timestamp"
                 }
             ]
@@ -69,8 +69,8 @@
             "email": "string",
             "sessions": [
                 {
-                    "session_id": "integer",
-                    "session_info": "strig",
+                    "session_id": 3,
+                    "session_info": "보컬",
                     "created_at": "timestamp"
                 }
             ]
@@ -84,8 +84,8 @@
             "email": "string",
             "sessions": [
                 {
-                    "session_id": "integer",
-                    "session_info": "strig",
+                    "session_id": 3,
+                    "session_info": "보컬",
                     "created_at": "timestamp"
                 }
             ]
@@ -99,8 +99,8 @@
             "email": "string",
             "sessions": [
                 {
-                    "session_id": "integer",
-                    "session_info": "strig",
+                    "session_id": 2,
+                    "session_info": "기타",
                     "created_at": "timestamp"
                 }
             ]
@@ -114,8 +114,8 @@
             "email": "string",
             "sessions": [
                 {
-                    "session_id": "integer",
-                    "session_info": "strig",
+                    "session_id": 4,
+                    "session_info": "베이스",
                     "created_at": "timestamp"
                 }
             ]
@@ -129,8 +129,8 @@
             "email": "string",
             "sessions": [
                 {
-                    "session_id": "integer",
-                    "session_info": "strig",
+                    "session_id": 2,
+                    "session_info": "기타",
                     "created_at": "timestamp"
                 }
             ]
@@ -144,8 +144,23 @@
             "email": "string",
             "sessions": [
                 {
-                    "session_id": "integer",
-                    "session_info": "strig",
+                    "session_id": 1,
+                    "session_info": "드럼",
+                    "created_at": "timestamp"
+                }
+            ]
+        },
+        {
+            "post_id": 11,
+            "title": "string",
+            "content": "string",
+            "created_at": "timestamp",
+            "nickname": "11번",
+            "email": "string",
+            "sessions": [
+                {
+                    "session_id": 3,
+                    "session_info": "보컬",
                     "created_at": "timestamp"
                 }
             ]

@@ -58,3 +58,73 @@ a {
   text-decoration: none;
   color: black;
 }
+.WriteBtn {
+  position: absolute;
+  margin-left: 1190px;
+  width: 100px;
+  height: 40px;
+  border-radius: 30px;
+  border: none;
+  background-color: rgb(121, 186, 242);
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+.Backbutton {
+  border: none;
+}
+
+form {
+  display: flex;
+  width: 1200px;
+  margin: auto;
+}
+.ImgUpload {
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  min-width: 300px;
+  
+}
+.ImgUpload img {
+  max-height: 350px;
+  object-fit: cover;
+}
+.TextUpload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.InputTitle {
+  width: 700px;
+  height: 40px;
+  border-width: 0 0 2px;
+  border-color: rgb(121, 186, 242);
+  font-size: 25px;
+}
+
+.InputContent {
+  margin-top: 10px;
+  width: 700px;
+  height: 400px;
+  resize: none;
+  font-size: 15px;
+
+  border-color: rgb(192, 217, 240);
+}
+
+.SubmitBtn {
+  margin-top: 10px;
+  width: 100px;
+  height: 40px;
+  border: none;
+  background-color: rgb(121, 186, 242);
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+label {
+  margin-top: 5px;
+}
