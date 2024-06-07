@@ -1,0 +1,66 @@
+/* src/routes/MyPerformances.css */
+
+.MyPerformancesPage {
+  padding: 20px;
+}
+
+.PerformancesGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.PerformanceCard {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 30%;
+}
+
+.PerformanceImage {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.PerformanceDetails {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.PerformanceDate {
+  font-size: 14px;
+  color: #777;
+}
+
+.PerformanceTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.DeleteButton {
+  margin-top: 10px;
+  background-color: #f00;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.DeleteButton:hover {
+  background-color: #d00;
+}
+
+.Pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.Pagination span {
+  font-size: 16px;
+  cursor: pointer;
+}

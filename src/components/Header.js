@@ -15,6 +15,13 @@ function Header() {
     navigate("/");
     return;
   }
+
+  function Mypage() {
+      navigate("/profile/edit/:user_id");
+    return;
+  }
+
+
   return (
     <div className="Headerwidth">
       <div className="Container">
@@ -33,7 +40,7 @@ function Header() {
           <button className="LoginBtn" onClick={ToLogin}>
             로그인
           </button>
-          <button className="MypageBtn">마이페이지</button>
+          <button className="MypageBtn" onClick={Mypage}>마이페이지</button>
         </div>
       </div>
     </div>

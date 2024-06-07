@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
-import "./Login.css";
+
 /*
 function Login() {
     const navigate = useNavigate();
@@ -33,6 +30,10 @@ function Login() {
 export default Login;
 
 */
+import { useEffect, useState } from "react";
+import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
