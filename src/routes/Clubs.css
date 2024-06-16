@@ -1,21 +1,20 @@
 * {
   font-family: "Gothic A1", sans-serif;
-
 }
 .BoardPage {
   background-color: rgb(249, 249, 249);
   height: 100vh;
 }
 
-
 .Boards {
-    background-color: white;
-    height: 460px;
-    width: 1400px;
-    border-radius: 30px;
-    margin: auto;
-    margin-top: 20px;
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.25);
+  background-color: white;
+  height: 460px;
+  width: 1400px;
+  border-radius: 30px;
+  margin: auto;
+  margin-top: 20px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.25);
+  padding-top: 15px;
 }
 
 .Clubpost {
@@ -28,6 +27,26 @@
   margin: 20px;
   display: flex;
   cursor: pointer;
+}
+.Boardname {
+  display: flex;
+  justify-content: space-between;
+}
+.ModifyBtns button{
+border: none;
+width: 32px;
+height: 32px;
+border-radius: 5px;
+margin-left: 5px;
+background-color: rgb(201, 201, 201);
+color: white;
+cursor: pointer;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.ModifyBtns :hover {
+  background-color: rgb(164, 164, 164);
 }
 .clubimg {
   background-color: black;
@@ -42,17 +61,7 @@
   margin-top: 10px;
   width: 1300px;
 }
-.Likebox {
-  display: flex;
-}
-.Likes {
-  width: 25px;
-}
-.Likenum {
-  color: rgb(245, 53, 76);
-  margin-top: auto;
-  margin-left: 5px;
-}
+
 .Posttime {
   width: 155px;
   margin-left: auto;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import instance from "./axios";
+import { Link, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import BoardBtns from "../components/BoardBtns";
 import Pagenumber from "../components/Pagenumber";
@@ -8,13 +8,16 @@ import "./Clubs.css";
 
 function Clubs() {
   const [posts, setPosts] = useState([]);
+  const [coverimages, setCoverImages] = useState();
   const [currentPosts, setCurrentPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [isWriting, setIsWriting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingPostId, setEditingPostId] = useState(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
   const handlePageChange = (page) => {
     setPage(page);
   };
@@ -23,28 +26,56 @@ function Clubs() {
   const IndexLastPost = page * postPerPage;
   const IndexFirstPost = IndexLastPost - postPerPage;
   const [loading, setLoading] = useState(false);
+  const { post_id } = useParams();
 
-  // cd public
-  //cd data
-  //json-server --watch sample0.json --port 3003
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const res = await instance.get("/posts");
+      setPosts(res.data.posts);
+      setCurrentPosts(res.data.posts.slice(IndexFirstPost, IndexLastPost));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      const res = await axios.get("http://localhost:3003/posts");
-      setPosts(res.data);
-      setCurrentPosts(posts.slice(IndexFirstPost, IndexLastPost));
-      setLoading(false);
-    };
     fetchPosts();
-  }, [currentPosts, IndexFirstPost, IndexLastPost, page]);
+  }, [IndexFirstPost, IndexLastPost, page]);
+
+  useEffect(() => {
+    async function getcoverimages(post_id) {
+      setLoading(true);
+      try {
+        const res = await instance.get(`/posts_1/${post_id}`);
+        setCoverImages(res.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching post coverimages:", error);
+        setLoading(false);
+      }
+    }
+    getcoverimages(post_id);
+  }, []);
 
   const handleWriteClick = () => {
     setIsWriting(true); // 글 작성
+    setIsEditing(false);
+    setTitle("");
+    setContent("");
+    setImage(null);
+    setImagePreview(null);
   };
 
   const handleBackClick = () => {
     setIsWriting(false); // 다시 게시판으로
+    setIsEditing(false);
+    setTitle("");
+    setContent("");
+    setImage(null);
+    setImagePreview(null);
   };
 
   const handleTitleChange = (e) => {
@@ -70,12 +101,41 @@ function Clubs() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add logic to submit the new post, including the image file
-    console.log({ title, content, image });
+    console.log({ title, content, imagePreview });
+
+    const updatedPost = {
+      title,
+      content,
+      file_url: imagePreview,
+    };
+
+    try {
+      if (isEditing) {
+        await instance.put(`/posts/${editingPostId}`, updatedPost);
+      } else {
+        await instance.post("/posts", updatedPost);
+      }
+      await fetchPosts();
+    } catch (error) {
+      console.error("Error submitting post:", error);
+    }
+
     setIsWriting(false);
+    setIsEditing(false);
   };
+
+  const handleEditClick = (post) => {
+    setIsEditing(true);
+    setIsWriting(true);
+    setEditingPostId(post.post_id);
+    setTitle(post.title);
+    setContent(post.content);
+    setImage(null);
+    setImagePreview(post.image_url);
+  };
+
   return (
     <div>
       <div className="BoardPage">
@@ -126,54 +186,81 @@ function Clubs() {
                     onChange={handleContentChange}
                     placeholder="학교명, 인원수, 좋아하는 밴드 스타일 등을 적어주시면 좋아요!"
                     required
-                    style={{"height":"280px"}}
+                    style={{ height: "280px" }}
                   ></textarea>
-
-                  <button type="submit" className="SubmitBtn">
-                    작성하기
-                  </button>
+                  <div className="EditBtns">
+                    <button type="button" onClick={handleBackClick}>
+                      취소
+                    </button>
+                    <button type="submit" className="SubmitBtn">
+                      {isEditing ? "수정하기" : "작성하기"}
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
           ) : (
             <div>
-              <button className="WriteBtn" onClick={handleWriteClick} style={{"marginLeft": "1270px", "marginTop" : "400px"}}>
+              <button
+                className="WriteBtn"
+                onClick={handleWriteClick}
+                style={{ marginLeft: "1270px", marginTop: "400px" , cursor:"pointer"}}
+              >
                 글쓰기
               </button>
-                <div className="Clubpost">
-                
+              <div className="Clubpost">
                 {currentPosts.slice(0, 3).map((post) => (
                   <Link
-                  to={`/boards/clubs/${post.post_id}`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <div
+                    to={`/boards/clubs/${post.post_id}`}
+                    style={{ textDecoration: "none" }}
                     key={post.post_id}
-                    className="Postbox"
                   >
-                    <div className="clubimg">photo</div>
-                    <div className="contentbox">
-                      <h3>{post.title}</h3>
-                      <p>
-                        {post.content.length > 80
-                          ? `${post.content.slice(0, 80)}...`
-                          : post.content}
-                      </p>
-                      <div className="Likebox">
+                    <div className="Postbox">
+                      <div>
                         <img
-                          className="Likes"
-                          src="/img/Likes.png"
-                          alt="Likes"
-                        ></img>
-                        <p className="Likenum">507</p>
+                          className="clubimg"
+                          src={
+                            coverimages?.file_url
+                              ? coverimages.file_url
+                              : "/img/basicprofile.png"
+                          }
+                          alt="clubimg"
+                        />
                       </div>
+                      <div className="contentbox">
+                        <div className="Boardname">
+                          <h3 style={{ color: "rgb(51,0,119)" }}>
+                            동아리 모집 게시판
+                          </h3>
+                          <div className="ModifyBtns">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleEditClick(post);
+                              }}
+                            >
+                              <img src="/img/edit.png" alt="edit" />
+                            </button>
+                            <button>
+                              <img src="/img/trash.png" alt="trash" />
+                            </button>
+                          </div>
+                        </div>
 
-                      <p className="Posttime">작성날짜 {post.created_at}</p>
+                        <h3>{post.title}</h3>
+                        <p>
+                          {post.content.length > 80
+                            ? `${post.content.slice(0, 80)}...`
+                            : post.content}
+                        </p>
+
+                        <div></div>
+                        <p className="Posttime">작성날짜 {post.created_at}</p>
+                      </div>
                     </div>
-                  </div>
                   </Link>
                 ))}
-                    
               </div>
               <Pagenumber
                 totalCount={posts.length}

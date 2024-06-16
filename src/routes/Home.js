@@ -68,7 +68,7 @@ function Home() {
       <Header />
       <section className="banner">
         <div className="banner-image">
-          <img alt="Band" src="/img/image 1.png" />
+          <img alt="Band" src="/img/image1.png" />
         </div>
         <div className="banner-text">
           <div>밴드 동아리 커뮤니티와</div>

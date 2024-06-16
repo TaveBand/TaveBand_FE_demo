@@ -17,6 +17,10 @@ function Header() {
     navigate("/boards/clubs");
     return;
   }
+  function ToSesseion() {
+    navigate("/boards");
+    return;
+  }
   return (
     <div className="Headerwidth">
       <div className="Container">

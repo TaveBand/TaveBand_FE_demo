@@ -4,13 +4,15 @@ import BoardBtns from "../components/BoardBtns";
 import { Link } from "react-router-dom";
 import Pagenumber from "../components/Pagenumber";
 import "./Performances.css";
-import axios from "axios";
+import instance from "./axios";
 
 function Performances() {
   const [posts, setPosts] = useState([]);
   const [currentPosts, setCurrentPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [isWriting, setIsWriting] = useState(false); //글쓰기 버튼에 따른 상태 업데이트
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingPostId, setEditingPostId] = useState(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -24,20 +26,22 @@ function Performances() {
   const IndexFirstPost = IndexLastPost - postPerPage;
   const [loading, setLoading] = useState(false);
 
-  // cd public
-  //cd data
-  //json-server --watch sample1.json --port 3001
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const res = await instance.get("/posts2");
+      setPosts(res.data.posts);
+      setCurrentPosts(res.data.posts.slice(IndexFirstPost, IndexLastPost));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      const res = await axios.get("http://localhost:3001/posts");
-      setPosts(res.data);
-      setCurrentPosts(posts.slice(IndexFirstPost, IndexLastPost));
-      setLoading(false);
-    };
     fetchPosts();
-  }, [currentPosts, IndexFirstPost, IndexLastPost, page]);
+  }, [IndexFirstPost, IndexLastPost, page]);
 
   const [selectedPost, setSelectedPost] = useState(null);
   const handlePostClick = (postId) => {
@@ -75,12 +79,41 @@ function Performances() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add logic to submit the new post, including the image file
-    console.log({ title, content, image });
+    console.log({ title, content, imagePreview });
+
+    const updatedPost = {
+      title,
+      content,
+      file_url: imagePreview,
+    };
+
+    try {
+      if (isEditing) {
+        await instance.put(`/posts2/${editingPostId}`, updatedPost);
+      } else {
+        await instance.post("/posts2", updatedPost);
+      }
+      await fetchPosts();
+    } catch (error) {
+      console.error("Error submitting post:", error);
+    }
+
     setIsWriting(false);
+    setIsEditing(false);
   };
+
+  const handleEditClick = (post) => {
+    setIsEditing(true);
+    setIsWriting(true);
+    setEditingPostId(post.post_id);
+    setTitle(post.title);
+    setContent(post.content);
+    setImage(null);
+    setImagePreview(post.image_url);
+  };
+  //공연 예정 일자나 장소, 모집하는 팀 수, 한 팀당 곡 수등을 적어주시면 좋아요!
   return (
     <div>
       <div className="BoardPage">
@@ -121,7 +154,7 @@ function Performances() {
                     className="InputTitle"
                     value={title}
                     onChange={handleTitleChange}
-                    placeholder="제목을 입력해주세요!"
+                    placeholder="밴드 이름 : 제목"
                     required
                   />
 
@@ -129,14 +162,19 @@ function Performances() {
                     className="InputContent"
                     value={content}
                     onChange={handleContentChange}
-                    placeholder="공연 예정 일자나 장소, 모집하는 팀 수, 한 팀당 곡 수등을 적어주시면 좋아요!"
+                    placeholder="학교명, 인원수, 좋아하는 밴드 스타일 등을 적어주시면 좋아요!"
                     required
                     style={{ height: "280px" }}
                   ></textarea>
 
-                  <button type="submit" className="SubmitBtn">
-                    작성하기
-                  </button>
+                  <div className="EditBtns">
+                    <button type="button" onClick={handleBackClick}>
+                      취소
+                    </button>
+                    <button type="submit" className="SubmitBtn">
+                      {isEditing ? "수정하기" : "작성하기"}
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
@@ -145,43 +183,54 @@ function Performances() {
               <button
                 className="WriteBtn"
                 onClick={handleWriteClick}
-                style={{ marginLeft: "1270px", marginTop: "400px" }}
+                style={{ marginLeft: "1270px", marginTop: "400px", cursor:"pointer"}}
               >
                 글쓰기
               </button>
-              <ul className="Clubpost">
-                {currentPosts.map((post) => (
+              <div className="Clubpost">
+                {currentPosts.slice(0, 3).map((post) => (
                   <Link
                     to={`/boards/union-performances/${post.post_id}`}
                     style={{ textDecoration: "none" }}
+                    key={post.post_id}
                   >
-                    <li
-                      key={post.post_id}
-                      className="Postbox"
-                    >
-                      <div className="clubimg">photo</div>
+                    <div className="Postbox">
+                      <div className="clubimg"></div>
                       <div className="contentbox">
+                        <div className="Boardname">
+                          <h3 style={{ color: "rgb(51,0,119)" }}>
+                            연합 공연 팀 모집 게시판
+                          </h3>
+                          <div className="ModifyBtns">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleEditClick(post);
+                              }}
+                            >
+                              <img src="/img/edit.png" alt="edit" />
+                            </button>
+                            <button>
+                              <img src="/img/trash.png" alt="trash" />
+                            </button>
+                          </div>
+                        </div>
+
                         <h3>{post.title}</h3>
                         <p>
                           {post.content.length > 80
                             ? `${post.content.slice(0, 80)}...`
                             : post.content}
                         </p>
-                        <div className="Likebox">
-                          <img
-                            className="Likes"
-                            src="/img/Likes.png"
-                            alt="Likes"
-                          ></img>
-                          <p className="Likenum">507</p>
-                        </div>
 
+                        <div></div>
                         <p className="Posttime">작성날짜 {post.created_at}</p>
                       </div>
-                    </li>
+                    </div>
                   </Link>
                 ))}
-              </ul>
+              </div>
               <Pagenumber
                 totalCount={posts.length}
                 page={page}

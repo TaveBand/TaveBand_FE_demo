@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import BoardBtns from "../components/BoardBtns";
 import Pagenumber from "../components/Pagenumber";
 import Toggle from "../components/Toggle";
-import axios from "axios";
+import instance from "./axios";
 import "./PR.css";
 
 function PR() {
@@ -13,30 +13,30 @@ function PR() {
   const [page, setPage] = useState(1);
   const postPerPage = 8;
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState([]); //세션 조건에 따른 필터링
-  const [isWriting, setIsWriting] = useState(false); //글쓰기 버튼에 따른 상태 업데이트
+  const [filters, setFilters] = useState([]); // 세션 조건에 따른 필터링
+  const [isWriting, setIsWriting] = useState(false); // 글쓰기 버튼에 따른 상태 업데이트
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null); // 사진 미리보기
 
-  // cd public
-  //cd data
-  //json-server --watch sample2.json --port 3002
-
   useEffect(() => {
-    const fetchPosts = async () => {
+    async function getProducts() {
       setLoading(true);
       try {
-        const res = await axios.get("http://localhost:3002/posts");
-        setPosts(res.data);
+        const res = await instance.get("/posts3");
+        if (Array.isArray(res.data.posts)) {
+          setPosts(res.data.posts);
+        } else {
+          console.error("Unexpected data format:", res.data);
+        }
       } catch (error) {
         console.error("Failed to fetch posts:", error);
       } finally {
         setLoading(false);
       }
-    };
-    fetchPosts();
+    }
+    getProducts();
   }, []);
 
   useEffect(() => {
@@ -44,13 +44,21 @@ function PR() {
       filters.length === 0
         ? posts
         : posts.filter((post) =>
+            post.sessions &&
             post.sessions.some((session) =>
               filters.includes(session.session_info)
             )
           );
+
     const IndexLastPost = page * postPerPage;
     const IndexFirstPost = IndexLastPost - postPerPage;
-    setCurrentPosts(filteredPosts.slice(IndexFirstPost, IndexLastPost));
+
+    if (Array.isArray(filteredPosts)) {
+      setCurrentPosts(filteredPosts.slice(IndexFirstPost, IndexLastPost));
+    } else {
+      console.error("Filtered posts is not an array:", filteredPosts);
+      setCurrentPosts([]);
+    }
   }, [posts, filters, page]);
 
   const handlePageChange = (page) => {
@@ -59,7 +67,7 @@ function PR() {
 
   const handleFilterChange = (selectedFilters) => {
     setFilters(selectedFilters);
-    setPage(1); //필터가 바뀌면 첫번째 페이지로 리셋
+    setPage(1); // 필터가 바뀌면 첫번째 페이지로 리셋
   };
 
   const handleWriteClick = () => {
@@ -99,6 +107,7 @@ function PR() {
     console.log({ title, content, image });
     setIsWriting(false);
   };
+
   return (
     <div>
       <div className="BoardPage">
@@ -174,7 +183,7 @@ function PR() {
                   currentPosts.map((post) => (
                     <div key={post.post_id} className="PRbox">
                       <Link
-                        to={`/boards/pr/${post.post_id}`}
+                        to={`/boards/pr/${+post.post_id}`}
                         style={{ textDecoration: "none" }}
                       >
                         <img
@@ -186,9 +195,10 @@ function PR() {
                           <h3>{post.nickname}</h3>
                           <p>{post.email}</p>
                           <div className="Sessioninfo">
-                            {post.sessions
-                              .map((session) => session.session_info)
-                              .join(", ")}
+                            {post.sessions &&
+                              post.sessions
+                                .map((session) => session.session_info)
+                                .join(", ")}
                           </div>
                         </div>
                       </Link>
@@ -200,6 +210,7 @@ function PR() {
                   filters.length === 0
                     ? posts.length
                     : posts.filter((post) =>
+                        post.sessions &&
                         post.sessions.some((session) =>
                           filters.includes(session.session_info)
                         )

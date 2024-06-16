@@ -10,8 +10,9 @@ import Performances from "./routes/Performances";
 import ClubsDetail from "./routes/ClubsDetail";
 import PRDetail from "./routes/PRDetail";
 import PerfoDetail from "./routes/PerfoDetail";
-
+import Session from "./routes/Session"
 function App() {
+  
   return (
     <Routes>
       <Route path="/" element={<Home />}></Route>
@@ -25,8 +26,9 @@ function App() {
       <Route path="/boards/pr/:post_id" element={<PRDetail />}></Route>
       <Route path="/boards/union/performances" element={<Performances />}></Route>
       <Route path="/boards/union-performances/:post_id" element={<PerfoDetail />}></Route>
-
+      <Route path="/boards"></Route>
     </Routes>
+    
   );
 }
 

@@ -1,39 +1,92 @@
-import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import instance from "./axios";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import BoardBtns from "../components/BoardBtns";
 import Header from "../components/Header";
+import Comment from "../components/Comment";
 import "./PRDetail.css";
 
 function PRDetail() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [detail, setDetail] = useState([]);
+  const [detail, setDetail] = useState({ sessions: [], comments: [] });
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
   const { post_id } = useParams();
 
-  useEffect(() => {
-    const getDetail = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:3002/posts?post_id=${post_id}`
-        );
-        setDetail(res.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching post details:", error);
-        setLoading(false);
-      }
-    };
-    getDetail();
-  }, [post_id]);
+  const getDetail = async (post_id) => {
+    setLoading(true);
+    try {
+      const res = await instance.get(`/posts3_1/${post_id}`);
+      setDetail(res.data);
+      setTitle(res.data.title);
+      setContent(res.data.content);
+      setImagePreview(res.data.file_url);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching post details:", error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!loading) {
-      console.log(detail);
-      console.log(detail[0].nickname);
+    getDetail(post_id);
+  }, [post_id]);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleBackClick = () => {
+    setIsEditing(false);
+    setTitle(detail.title);
+    setContent(detail.content);
+    setImagePreview(detail.file_url);
+  };
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const handleContentChange = (e) => {
+    setContent(e.target.value);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
     }
-  }, [loading, detail]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const updatedPost = {
+      title,
+      content,
+      file_url: imagePreview,
+    };
+
+    try {
+      await instance.put(`/posts3/${post_id}`, updatedPost);
+      // Refresh details after update
+      await getDetail(post_id);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error submitting post:", error);
+    }
+  };
+
   return (
     <div className="BoardPage">
       <Header />
@@ -42,34 +95,148 @@ function PRDetail() {
         <button className="Backbutton" onClick={() => navigate("/boards/pr")}>
           <img className="Backbutton" alt="Backbutton" src="/img/arrow.png" />
         </button>
-        <img
-          src="/img/basicprofile.png"
-          alt="PRDetailimg"
-          className="PRDetailimg"
-        ></img>
-        <div className="Contentbox">
-          {/* 이렇게 작성해야 useState로 초기화 되고나서 렌더링해도 에러가 안뜸 */}
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            detail.length > 0 && (
+
+        <div className="Detailbox">
+          {!isEditing && (
+            <img
+              src="/img/basicprofile.png"
+              alt="PRDetailimg"
+              className="PRDetailimg"
+            />
+          )}
+
+          <div className="Contentbox">
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
               <>
-                <div className="DetailSession">
-                  {detail[0].sessions[0].session_info}
-                </div>
-                <h1>{detail[0].nickname}</h1>
-                <div className="Userbox">
-                  <img src="/img/basicprofile.png" className="Profileimg"></img>
-                  <div>
-                    <p>{detail[0].email}</p>
-                    <p style={{ color: "grey" }}>{detail[0].created_at}</p>
+                {!isEditing && detail.sessions && detail.sessions.length > 0 && (
+                  <div className="DetailSession">
+                    {detail.sessions[0].session_info}
+                  </div>
+                )}
+                {isEditing ? (
+                  <form onSubmit={handleSubmit}>
+                      <div className="Editbox">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                      {imagePreview && (
+                        <img
+                          src={imagePreview}
+                          alt="ImagePreview"
+                          width="300px"
+                        />
+                        )}
+                        <div className="EditContentbox"><input
+                        type="text"
+                        className="InputTitle"
+                        value={title}
+                        onChange={handleTitleChange}
+                        placeholder="제목을 입력하세요."
+                        required
+                      />
+                      <textarea
+                        className="InputContent"
+                        value={content}
+                        onChange={handleContentChange}
+                        placeholder="내용을 입력하세요."
+                        required
+                      ></textarea>
+
+                     
+                      <div className="EditBtns">
+                        <button type="button" onClick={handleBackClick}>
+                          취소
+                        </button>
+                        <button type="submit">수정하기</button>
+                      </div></div>
+                      
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <h1>{detail.title}</h1>
+                    <div className="Userbox">
+                      <img
+                        src="/img/basicprofile.png"
+                        className="Profileimg"
+                        alt="Profileimg"
+                      />
+
+                      <div>
+                        <p>{detail.email}</p>
+                        <p style={{ color: "grey" }}>{detail.created_at}</p>
+                      </div>
+                      <div className="ModifyBtns">
+                        <button onClick={handleEditClick}>
+                          <img src="/img/edit.png" alt="edit" />
+                        </button>
+                        <button>
+                          <img src="/img/trash.png" alt="trash" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="DetailText">{detail.content}</div>
+                    <button className="ScrBtn">
+                      <img src="/img/bookmark.png" alt="bookmark" />
+                      스크랩하기
+                    </button>
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {!isEditing && (
+          <div className="Commentbox">
+            <hr />
+            {detail.comments && detail.comments.length > 0 ? (
+              detail.comments.map((comment, index) => (
+                <div
+                  key={comment.comment_id || index}
+                  className="CommentContent"
+                >
+                  <img
+                    src="/img/basicprofile.png"
+                    className="Profileimg"
+                    alt="Profileimg"
+                  />
+                   
+                  <div className="comment1">
+                    <div className="Comment2">
+                      <p className="Commentnickname">{comment.nickname}</p>
+                      <p style={{ color: "grey", fontSize: "15px" }}>
+                        {comment.created_at}
+                      </p>
+                    </div>
+                    <p style={{ fontSize: "17px" }}>{comment.content}</p>
                   </div>
                 </div>
-                <div className="DetailText">{detail[0].content}</div>
-              </>
-            )
-          )}
-        </div>
+              ))
+            ) : (
+              <p
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                  color: "grey",
+                }}
+              >
+                작성된 댓글이 없습니다
+              </p>
+            )}
+            {!isEditing && (
+              <Comment
+                post_id={post_id}
+                endpoint="/posts3_1"
+                refreshComments={() => getDetail(post_id)}
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
