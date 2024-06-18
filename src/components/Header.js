@@ -18,14 +18,14 @@ function Header() {
     return;
   }
   function ToSesseion() {
-    navigate("/boards");
+    navigate("/boards/5");
     return;
   }
   return (
     <div className="Headerwidth">
       <div className="Container">
         <div className="Category_left">
-          <button>세션</button>
+          <button onClick={ToSesseion}>세션</button>
           <button onClick={ToBoards}>모집</button>
           <button>연합공연</button>
           <button>음악분석</button>

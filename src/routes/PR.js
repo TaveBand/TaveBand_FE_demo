@@ -161,9 +161,14 @@ function PR() {
                     required
                   ></textarea>
 
-                  <button type="submit" className="SubmitBtn">
-                    작성하기
-                  </button>
+<div className="EditBtns">
+                    <button type="button" onClick={handleBackClick}>
+                      취소
+                    </button>
+                    <button type="submit" className="SubmitBtn">
+                      작성하기
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
