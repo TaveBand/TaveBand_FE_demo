@@ -2,105 +2,78 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f8f9fa;
 }
 
-.container {
-  display: flex; /* Flexbox 레이아웃을 사용합니다. */
-  justify-content: center; /* 가로 방향으로 가운데 정렬합니다. */
-}
-
-.MainContent {
+.ProfileEdit-container {
   display: flex;
-  justify-content: center;
-  align-items: flex-start; /* 컨텐츠를 위로 정렬합니다. */
-  flex-grow: 1; /* MainContent가 남은 공간을 모두 채우도록 합니다. */
-}
-
-
-
-.Sidebar {
-  background-color: #79BAF2;
-  color: white;
-  width: 250px;
-  padding: 20px;
-  box-sizing: border-box;
-  position: fixed;
-  top: 120px; /* 해더 아래에 위치시킵니다. */
-  bottom: 0;
-  left: 0;
-}
-.Sidebar h2 {
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-
-.Sidebar a {
-  color: white;
-  text-decoration: none;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.Sidebar a:hover {
-  text-decoration: underline;
+  width: 100%;
+  margin-left: 250px; /* 사이드바의 넓이와 동일 */
 }
 
 .Content {
-  margin-top: 100px;
-  background-color: #E0E0E0;
-  padding: 40px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  padding: 20px;
+  max-width: 600px;
+  margin: 60px auto; /* 사이드바와 헤더로부터 충분한 공간 */
+  background-color: #f5f5f5;
   border-radius: 10px;
-  width: 400px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .Content h2 {
-  margin-top: -30px;
   text-align: center;
+  margin-bottom: 20px;
 }
 
-.InputField {
+.InputField,
+.CheckboxGroup {
   margin-bottom: 15px;
 }
 
-.InputField input {
+.InputField label,
+.CheckboxGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.InputField input,
+.CheckboxGroup input {
   width: 100%;
   padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .CheckboxGroup {
-  width: 100%;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;
 }
 
 .CheckboxGroup label {
   display: flex;
   align-items: center;
-  cursor: pointer;
 }
 
 .CheckboxGroup input {
+  width: auto;
   margin-right: 5px;
 }
 
-  .UpdateButton {
-    text-align: center;
-    background-color: #79BAF2;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
+.UpdateButton {
+  display: block;
+  width: 100%;
+  padding: 10px 0;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
 
 .UpdateButton:hover {
-  background-color: #79BAF2;
+  background-color: #0056b3;
 }

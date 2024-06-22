@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../components/Header";
-import "./ProfileEdit.css";
-import { Link } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
+import "./Profile.css";
+import { useParams } from "react-router-dom";
 
-function ProfileEdit() {
+function Profile() {
+  const { user_id } = useParams();
   const [formData, setFormData] = useState({
     nickname: "",
     email: "",
     password: "",
     passwordConfirm: "",
-    role: []
+    sessions: [],
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userId = 1; // 예시: 실제 사용자 ID로 변경
-        const response = await axios.get(`/dailband/user/${userId}/profile`);
+        const response = await axios.get(`/dailband/user/${user_id}/profile`);
         setFormData(response.data);
       } catch (error) {
         console.error(error);
@@ -25,13 +26,13 @@ function ProfileEdit() {
     };
 
     fetchData();
-  }, []);
+  }, [user_id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -39,18 +40,24 @@ function ProfileEdit() {
     const { value, checked } = e.target;
     setFormData((prevData) => {
       if (checked) {
-        return { ...prevData, role: [...prevData.role, value] };
+        return { ...prevData, sessions: [...prevData.sessions, { session_info: value }] };
       } else {
-        return { ...prevData, role: prevData.role.filter((role) => role !== value) };
+        return {
+          ...prevData,
+          sessions: prevData.sessions.filter((session) => session.session_info !== value),
+        };
       }
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.password !== formData.passwordConfirm) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
     try {
-      const userId = 1; // 예시: 실제 사용자 ID로 변경
-      await axios.put(`/dailband/user/${userId}/profile`, formData);
+      await axios.put(`/dailband/user/${user_id}/profile`, formData);
       alert("프로필이 성공적으로 업데이트되었습니다.");
     } catch (error) {
       console.error(error);
@@ -59,111 +66,74 @@ function ProfileEdit() {
   };
 
   return (
-    <div className="ProfileEdit">
+    <div className="Profile">
       <Header />
-      <div className="Sidebar">
-      <h2>윤영선</h2>
-      <Link to="/profile/edit/:user_id">프로필 수정</Link>
-      <Link to="/scrap">스크랩</Link>
-      <Link to="/MyPost">내가 쓴 글</Link>
-      <Link to="/MyReservations">공연 예약</Link>
-    </div>
-      <div className="Content">
-        <h2>마이페이지</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="InputField">
-            <label>닉네임</label>
-            <input
-              type="text"
-              name="nickname"
-              value={formData.nickname}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="InputField">
-            <label>이메일</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="InputField">
-            <label>비밀번호 변경</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="InputField">
-            <label>비밀번호 확인</label>
-            <input
-              type="password"
-              name="passwordConfirm"
-              value={formData.passwordConfirm}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="CheckboxGroup">
-            <label>
+      <div className="Profile-container">
+        <Sidebar nickname={formData.nickname} />
+        <div className="Profile-content">
+          <h2>마이페이지</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="InputField">
+              <label>닉네임</label>
               <input
-                type="checkbox"
-                name="role"
-                value="드럼"
-                checked={formData.role.includes("드럼")}
-                onChange={handleCheckboxChange}
+                type="text"
+                name="nickname"
+                value={formData.nickname}
+                onChange={handleChange}
               />
-              드럼
-            </label>
-            <label>
+            </div>
+            <div className="InputField">
+              <label>이메일</label>
               <input
-                type="checkbox"
-                name="role"
-                value="기타"
-                checked={formData.role.includes("기타")}
-                onChange={handleCheckboxChange}
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
               />
-              기타
-            </label>
-            <label>
+            </div>
+            <div className="InputField">
+              <label>비밀번호 변경</label>
               <input
-                type="checkbox"
-                name="role"
-                value="보컬"
-                checked={formData.role.includes("보컬")}
-                onChange={handleCheckboxChange}
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
               />
-              보컬
-            </label>
-            <label>
+            </div>
+            <div className="InputField">
+              <label>비밀번호 확인</label>
               <input
-                type="checkbox"
-                name="role"
-                value="베이스"
-                checked={formData.role.includes("베이스")}
-                onChange={handleCheckboxChange}
+                type="password"
+                name="passwordConfirm"
+                value={formData.passwordConfirm}
+                onChange={handleChange}
               />
-              베이스
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="role"
-                value="키보드"
-                checked={formData.role.includes("키보드")}
-                onChange={handleCheckboxChange}
-              />
-              키보드
-            </label>
-          </div>
-          <button type="submit" className="UpdateButton">수정</button>
-        </form>
+            </div>
+            <div className="CheckboxGroup">
+              <label>세션 정보</label>
+              <div className="CheckboxOptions">
+                {["드럼", "기타", "보컬", "베이스", "키보드"].map((role) => (
+                  <label key={role}>
+                    <input
+                      type="checkbox"
+                      name="sessions"
+                      value={role}
+                      checked={formData.sessions.some(session => session.session_info === role)}
+                      onChange={handleCheckboxChange}
+                    />
+                    {role}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <button type="submit" className="UpdateButton">
+              수정
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
 
-export default ProfileEdit;
+export default Profile;
