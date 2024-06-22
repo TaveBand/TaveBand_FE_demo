@@ -11,6 +11,8 @@ import ClubsDetail from "./routes/ClubsDetail";
 import PRDetail from "./routes/PRDetail";
 import PerfoDetail from "./routes/PerfoDetail";
 import Drum from "./routes/Drum"
+import DrumDetail from "./routes/DrumDetail";
+
 import Guitar from "./routes/Guitar"
 import Vocal from "./routes/Vocal"
 import Bass from "./routes/Bass"
@@ -32,6 +34,7 @@ function App() {
       <Route path="/boards/union/performances" element={<Performances />}></Route>
       <Route path="/boards/union-performances/:post_id" element={<PerfoDetail />}></Route>
       <Route path="/boards/5" element={<Drum />}></Route>
+      <Route path="/boards/5/:post_id" element={<DrumDetail />}></Route>
       <Route path="/boards/6" element={<Guitar/>}></Route>
       <Route path="/boards/7" element={<Vocal />}></Route>
       <Route path="/boards/8" element={<Bass />}></Route>

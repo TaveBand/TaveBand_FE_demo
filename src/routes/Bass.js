@@ -124,7 +124,7 @@ function Bass() {
             <>
               <div className="TopBoard">
                 <div className="Sessionpost">
-                  <h1>밴드 음악의 근본 베이스 페이지</h1>
+                  <h1>밴드 음악의 근본 베이스 페이지!</h1>
                   {currentPosts.slice(0, 2).map((post) => (
                     <div key={post.id} className="SessionPostbox">
                       <div className="SessionUserbox">

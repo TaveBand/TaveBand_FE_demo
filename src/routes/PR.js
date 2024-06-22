@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import BoardBtns from "../components/BoardBtns";
 import Pagenumber from "../components/Pagenumber";
 import Toggle from "../components/Toggle";
-import instance from "./axios";
+import axios from 'axios';
 import "./PR.css";
 
 function PR() {
@@ -19,35 +19,34 @@ function PR() {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null); // 사진 미리보기
+  const [email, setEmail] = useState("");
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("/dailband/boards/pr");
+      setPosts(res.data.posts);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function getProducts() {
-      setLoading(true);
-      try {
-        const res = await instance.get("/posts3");
-        if (Array.isArray(res.data.posts)) {
-          setPosts(res.data.posts);
-        } else {
-          console.error("Unexpected data format:", res.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    getProducts();
-  }, []);
+    fetchPosts();
+  }, [page]);
 
   useEffect(() => {
     const filteredPosts =
       filters.length === 0
         ? posts
-        : posts.filter((post) =>
-            post.sessions &&
-            post.sessions.some((session) =>
-              filters.includes(session.session_info)
-            )
+        : posts.filter(
+            (post) =>
+              post.sessions &&
+              post.sessions.some((session) =>
+                filters.includes(session.session_info)
+              )
           );
 
     const IndexLastPost = page * postPerPage;
@@ -81,9 +80,12 @@ function PR() {
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
-
   const handleContentChange = (e) => {
     setContent(e.target.value);
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
   };
 
   const handleImageChange = (e) => {
@@ -101,12 +103,21 @@ function PR() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add logic to submit the new post, including the image file
-    console.log({ title, content, image });
+    console.log({ title, content, imagePreview });
+
+    const updatedPost = {
+      title,
+      content,
+      file_url: imagePreview,
+    };
+
+    await axios.post("/dailband/boards/pr", updatedPost);
+    await fetchPosts();
     setIsWriting(false);
   };
+
 
   return (
     <div>
@@ -146,6 +157,14 @@ function PR() {
                 <div className="TextUpload">
                   <input
                     type="text"
+                    value={email}
+                    onChange={handleEmailChange}
+                    placeholder="이메일 입력 : 사용자정보에서 받아오기?"
+                    required
+                  ></input>
+                  
+                  <input
+                    type="text"
                     className="InputTitle"
                     value={title}
                     onChange={handleTitleChange}
@@ -161,7 +180,7 @@ function PR() {
                     required
                   ></textarea>
 
-<div className="EditBtns">
+                  <div className="EditBtns">
                     <button type="button" onClick={handleBackClick}>
                       취소
                     </button>
@@ -214,11 +233,12 @@ function PR() {
                 totalCount={
                   filters.length === 0
                     ? posts.length
-                    : posts.filter((post) =>
-                        post.sessions &&
-                        post.sessions.some((session) =>
-                          filters.includes(session.session_info)
-                        )
+                    : posts.filter(
+                        (post) =>
+                          post.sessions &&
+                          post.sessions.some((session) =>
+                            filters.includes(session.session_info)
+                          )
                       ).length
                 }
                 page={page}

@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import instance from "./axios";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import BoardBtns from "../components/BoardBtns";
 import Header from "../components/Header";
+import Pagenumber from "../components/Pagenumber";
+import SessionBtns from "../components/SessionBtns";
 import Comment from "../components/Comment";
-import "./PerfoDetail.css";
 
-function PerfoDetail() {
+import "./DrumDetail.css";
+
+function DrumDetail() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [detail, setDetail] = useState([]);
+  const [detail, setDetail] = useState({ comments: [] });
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -20,9 +22,11 @@ function PerfoDetail() {
   const getDetail = async (post_id) => {
     setLoading(true);
     try {
-      const res = await instance.get(`/posts2_1/${post_id}`);
+      const res = await instance.get(`/posts5/${post_id}`);
       setDetail(res.data);
-      console.log(res.data);
+      setTitle(res.data.title);
+      setContent(res.data.content);
+      setImagePreview(res.data.file_url);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching post details:", error);
@@ -31,13 +35,12 @@ function PerfoDetail() {
   };
 
   useEffect(() => {
-    getDetail(post_id);
+      getDetail(post_id);
+      console.log(detail)
   }, [post_id]);
-
+    
   const handleEditClick = () => {
     setIsEditing(true);
-    setTitle(detail.title);
-    setContent(detail.content);
   };
 
   const handleBackClick = () => {
@@ -78,45 +81,36 @@ function PerfoDetail() {
     };
 
     try {
-      await instance.put(`/posts2/${post_id}`, updatedPost);
-      // Refresh details after update
+      await instance.put(`/posts5/${post_id}`, updatedPost);
+    
       await getDetail(post_id);
       setIsEditing(false);
     } catch (error) {
       console.error("Error submitting post:", error);
     }
   };
-  const handleDeleteClick = async (post) => {
-    if (window.confirm("게시글을 삭제하시겠습니까?")) {
-      try {
-        await instance.delete(`/posts2/${post.post_id}`);
-        await getDetail();
-        navigate("/boards/union/performances")
-        window.confirm("게시글이 삭제되었습니다!")
-      } catch (error) {
-        console.error("Error deleting post:", error);
-      }
-    }
-  };
+
   return (
     <div className="BoardPage">
       <Header />
-      <BoardBtns initialSelectedIndex={2} />
-      <div className="Detailboard">
-        <button
-          className="Backbutton"
-          onClick={() => navigate("/boards/union/performances")}
-        >
-          <img className="Backbutton" alt="Backbutton" src="/img/arrow.png" />
-        </button>
-        <div className="Detailbox">
+      <SessionBtns initialSelectedIndex={0} />
+      <div className="">
+        <div className="Detailboard">
+          <button
+            type="button"
+            onClick={() => navigate("/boards/5")}
+            className="Backbutton"
+          >
+            <img className="Backbutton" alt="Backbutton" src="/img/arrow.png" />
+          </button>
+          <div className="Detailbox">
           {imagePreview && !isEditing && (
-            <img
-              src={imagePreview}
-              alt="ClubsDetailimg"
-              className="ClubsDetailimg"
-            />
-          )}
+              <img
+                src={imagePreview}
+                alt="SessionDetailimg"
+                className="ClubsDetailimg"
+              />
+            )}
           <div className="Contentbox">
             {loading ? (
               <p>Loading...</p>
@@ -141,11 +135,12 @@ function PerfoDetail() {
                       className="InputContent"
                       value={content}
                       onChange={handleContentChange}
-                      placeholder="모집하시는 밴드 수, 팀 당 곡 수, 예정된 연합 공연의 대략적인 위치와 시간등을 적어주시면 좋아요!"
+                      placeholder="학교명, 인원수, 좋아하는 밴드 스타일 등을 적어주시면 좋아요!"
                       required
                       style={{ height: "280px" }}
                     ></textarea>
-  
+
+                   
                     <div className="EditBtns">
                       <button type="button" onClick={handleBackClick}>
                         취소
@@ -169,13 +164,10 @@ function PerfoDetail() {
                     <p style={{ color: "grey" }}>{detail.created_at}</p>
                   </div>
                   <div className="ModifyBtns">
-                    <button onClick={handleEditClick}>
-                      <img src="/img/edit.png" alt="edit" />
+                    <button>
+                      <img src="/img/edit.png" alt="edit" onClick={handleEditClick}/>
                     </button>
-                    <button onClick={(e) => {
-                                e.preventDefault();
-                                handleDeleteClick(detail);
-                              }}>
+                    <button>
                       <img src="/img/trash.png" alt="trash" />
                     </button>
                   </div>
@@ -188,11 +180,9 @@ function PerfoDetail() {
                 <img src="/img/bookmark.png" alt="bookmark" />
                 스크랩하기
               </button>
-            )}
-          </div>
-        </div>
-        {!isEditing && (
-          <div className="Commentbox">
+                          )}
+                          {!isEditing && (
+          <div className="SessionCommentbox">
             <hr />
             {detail.comments && detail.comments.length > 0 ? (
               detail.comments.map((comment, index) => (
@@ -229,16 +219,17 @@ function PerfoDetail() {
             )}
             <Comment
               post_id={post_id}
-              endpoint="/posts_2"
+              endpoint="/posts5"
               refreshComments={() => getDetail(post_id)}
             />
           </div>
         )}
+          </div>
+        </div>
+        </div>
       </div>
     </div>
   );
 }
 
-export default PerfoDetail;
-
-
+export default DrumDetail;

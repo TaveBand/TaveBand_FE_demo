@@ -1,13 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import instance from "./axios";
+
 import Header from "../components/Header";
 import "./Home.css";
 
 function Home() {
+  const [posts, setPosts] = useState([]);
   const handleIconClick = (session) => {
     // 세션 페이지로 이동하는 함수 (URL은 필요에 맞게 수정)
     window.location.href = `/${session}`;
   };
+  const [currentPosts, setCurrentPosts] = useState([]);
+  const [page, setPage] = useState(1);
+  const handlePageChange = (page) => {
+    setPage(page);
+  };
 
+
+  const IndexLastPost = page
+
+  const [loading, setLoading] = useState(false);
+  const { post_id } = useParams();
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const res = await instance.get("/posts");
+      setPosts(res.data.posts);
+     
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, [IndexLastPost, page]);
 
   const [showRecruitment, setShowRecruitment] = useState(true);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -24,6 +55,7 @@ function Home() {
 
   const handlePostClick = (postId) => {
     setSelectedPost(postId);
+    window.location.href = `/boards/clubs/${postId}`;
   };
 
   const handleConcertClick = (concertId) => {
@@ -36,7 +68,7 @@ function Home() {
     window.location.href = '/analysis';
   };
 
-  const posts = [
+  const posts1 = [
     {
       id: 1,
       type: 'recruitment',
@@ -79,23 +111,23 @@ function Home() {
       <section className="features">
         <h2>세션끼리 소통하고 싶다면?</h2>
         <div className="icons">
-          <div className="icon" onClick={() => handleIconClick('drum')}>
+          <div className="icon" onClick={() => handleIconClick('boards/5')}>
             <span role="img" aria-label="드럼">🥁</span> 
             <div className="icon-label">드럼</div>
           </div>
-          <div className="icon" onClick={() => handleIconClick('guitar')}>
+          <div className="icon" onClick={() => handleIconClick('boards/6')}>
             <span role="img" aria-label="기타">🎸</span> 
             <div className="icon-label">기타</div>
           </div>
-          <div className="icon" onClick={() => handleIconClick('vocal')}>
+          <div className="icon" onClick={() => handleIconClick('boards/7')}>
             <span role="img" aria-label="보컬">🎤</span> 
             <div className="icon-label">보컬</div>
           </div>
-          <div className="icon" onClick={() => handleIconClick('bass')}>
+          <div className="icon" onClick={() => handleIconClick('boards/8')}>
             <span role="img" aria-label="베이스">🎸</span> 
             <div className="icon-label">베이스</div>
           </div>
-          <div className="icon" onClick={() => handleIconClick('keyboard')}>
+          <div className="icon" onClick={() => handleIconClick('boards/9')}>
             <span role="img" aria-label="키보드">🎹</span> 
             <div className="icon-label">키보드</div>
           </div>
@@ -113,17 +145,16 @@ function Home() {
 
   <div className="post-list">
     {showRecruitment && posts
-      .filter((post) => post.type === 'recruitment')
-      .slice(0, 2)
+      .slice(-3, -1)
       .map((post) => (
-        <div key={post.id} onClick={() => handlePostClick(post.id)} className="post-item">
+        <div key={post.post_id} onClick={() => handlePostClick(post.post_id)} className="post-item">
           <div className="post-box">
             <h3>{post.title}</h3>
-            <p>{post.details}</p>
+            <p>{post.content}</p>
           </div>
         </div>
       ))}
-    {!showRecruitment && posts
+    {!showRecruitment && posts1
       .filter((post) => post.type === 'introduction')
       .slice(0, 2)
       .map((post) => (
@@ -141,17 +172,17 @@ function Home() {
   <h2>연합 공연 관련 소식</h2>
   <div className="concert-cards">
     <div className="concert-card" onClick={() => handleConcertClick('concert1')}>
-      <img src="/img/image 4.png" alt="Concert 1" />
+      <img src="img/image4.png" alt="Concert 1" />
       <h3>Concert 1</h3>
       <p>Concert 1에 대한 설명이 여기에 들어갑니다.</p>
     </div>
     <div className="concert-card" onClick={() => handleConcertClick('concert2')}>
-      <img src="/img/image 5.png" alt="Concert 2" />
+      <img src="img/image5.png" alt="Concert 2" />
       <h3>Concert 2</h3>
       <p>Concert 2에 대한 설명이 여기에 들어갑니다.</p>
     </div>
     <div className="concert-card" onClick={() => handleConcertClick('concert3')}>
-      <img src="/img/image 6.png" alt="Concert 3" />
+      <img src="img/image6.png" alt="Concert 3" />
       <h3>Concert 3</h3>
       <p>Concert 3에 대한 설명이 여기에 들어갑니다.</p>
     </div>

@@ -8,8 +8,8 @@ import "./Drum.css";
 
 function Drum() {
   const { post_id } = useParams();
-
-  //   const { board_id } = useParams();
+  const { board_id } = useParams();
+  
   const [posts, setPosts] = useState([]);
   const [coverimages, setCoverImages] = useState();
   const [currentPosts, setCurrentPosts] = useState([]);
@@ -33,7 +33,8 @@ function Drum() {
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const res = await instance.get("/posts5");
+      const res = await instance.get(`/dailband/boards/5`);
+      // const res = await instance.get(`/dailband/boards/${board_id}`);
       setPosts(res.data.posts);
       setCurrentPosts(res.data.posts.slice(IndexFirstPost, IndexLastPost));
     } catch (error) {
@@ -43,6 +44,7 @@ function Drum() {
     }
   };
 
+console.log(board_id)
   useEffect(() => {
     fetchPosts();
   }, [IndexFirstPost, IndexLastPost, page]);
@@ -90,17 +92,18 @@ function Drum() {
     e.preventDefault();
     console.log({ title, content, imagePreview });
 
-    const updatedPost = {
+    const newPost = {
       title,
       content,
       file_url: imagePreview,
+      nickname: "이름",
     };
 
     try {
       if (isEditing) {
-        await instance.put(`/posts5/${editingPostId}`, updatedPost);
+        await instance.put(`/posts/${editingPostId}`, newPost);
       } else {
-        await instance.post("/posts5", updatedPost);
+        await instance.post("/posts", newPost);
       }
       await fetchPosts();
     } catch (error) {
@@ -126,28 +129,35 @@ function Drum() {
                 <div className="Sessionpost">
                   <h1>WHIPLASH~! 드러머들 모여라!</h1>
                   {currentPosts.slice(0, 2).map((post) => (
-                    <div key={post.id} className="SessionPostbox">
-                      <div className="SessionUserbox">
-                        <img
-                          className="SessionProfile"
-                          src="/img/basicprofile.png"
-                          alt="profile"
-                        ></img>
-                        <p style={{ marginTop: "10px" }}>{post.nickname}</p>
-                      </div>
-                      <div className="SessionContent">
-                        <div className="Boardname">
-                          <h3 style={{ color: "rgb(51, 0, 119)" }}>
-                            세션 게시판
-                          </h3>
+                    <Link
+                      to={`/boards/${board_id}/${post.post_id}`}
+                      style={{ textDecoration: "none" }}
+                      key={post.post_id}
+                    >
+                      <div key={post.id} className="SessionPostbox">
+                        <div className="SessionUserbox">
+                          <img
+                            className="SessionProfile"
+                            src="/img/basicprofile.png"
+                            alt="profile"
+                          ></img>
+                          <p style={{ marginTop: "10px" }}>{post.nickname}</p>
                         </div>
-                        <h3 style={{ marginTop: "5px" }}>{post.title}</h3>
-                        <p>{post.content}</p>
-                        <p className="Posttime">작성날짜 {post.created_at}</p>
+                        <div className="SessionContent">
+                          <div className="Boardname">
+                            <h3 style={{ color: "rgb(51, 0, 119)" }}>
+                              세션 게시판
+                            </h3>
+                          </div>
+                          <h3 style={{ marginTop: "5px" }}>{post.title}</h3>
+                          <p>{post.content}</p>
+                          <p className="Posttime">작성날짜 {post.created_at}</p>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
+
                 <Pagenumber
                   totalCount={posts.length}
                   page={page}
@@ -165,39 +175,46 @@ function Drum() {
                       <h3>클릭해서</h3>
                       <h3>이동하기!</h3>
                       <p>유튜브 링크로 이동합니다.</p>
-                      <i><img src="/img/rightarrow.png" alt="rightarrow"></img></i>
+                      <i>
+                        <img src="/img/rightarrow.png" alt="rightarrow"></img>
+                      </i>
                     </figcaption>
                     <div className="VideoTitle">영상 제목</div>
                   </figure>
-                  
-                  
+
                   <figure className="Videopost">
                     <img src="/img/videoimg.png" alt="videoimg"></img>
                     <figcaption>
-                    <h3>클릭해서</h3>
+                      <h3>클릭해서</h3>
                       <h3>이동하기!</h3>
                       <p>유튜브 링크로 이동합니다.</p>
-                      <i><img src="/img/rightarrow.png" alt="rightarrow"></img></i>
-                    </figcaption>
-                    <div className="VideoTitle">영상 제목</div>
-                  </figure>
-                  <figure className="Videopost">
-                    <img src="/img/videoimg.png" alt="videoimg"></img>
-                    <figcaption>
-                    <h3>클릭해서</h3>
-                      <h3>이동하기!</h3>
-                      <p>유튜브 링크로 이동합니다.</p>
-                      <i><img src="/img/rightarrow.png" alt="rightarrow"></img></i>
+                      <i>
+                        <img src="/img/rightarrow.png" alt="rightarrow"></img>
+                      </i>
                     </figcaption>
                     <div className="VideoTitle">영상 제목</div>
                   </figure>
                   <figure className="Videopost">
                     <img src="/img/videoimg.png" alt="videoimg"></img>
                     <figcaption>
-                    <h3>클릭해서</h3>
+                      <h3>클릭해서</h3>
                       <h3>이동하기!</h3>
                       <p>유튜브 링크로 이동합니다.</p>
-                      <i><img src="/img/rightarrow.png" alt="rightarrow"></img></i>
+                      <i>
+                        <img src="/img/rightarrow.png" alt="rightarrow"></img>
+                      </i>
+                    </figcaption>
+                    <div className="VideoTitle">영상 제목</div>
+                  </figure>
+                  <figure className="Videopost">
+                    <img src="/img/videoimg.png" alt="videoimg"></img>
+                    <figcaption>
+                      <h3>클릭해서</h3>
+                      <h3>이동하기!</h3>
+                      <p>유튜브 링크로 이동합니다.</p>
+                      <i>
+                        <img src="/img/rightarrow.png" alt="rightarrow"></img>
+                      </i>
                     </figcaption>
                     <div className="VideoTitle">영상 제목</div>
                   </figure>

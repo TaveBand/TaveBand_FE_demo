@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import BoardBtns from "../components/BoardBtns";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Pagenumber from "../components/Pagenumber";
 import "./Performances.css";
 import instance from "./axios";
 
 function Performances() {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [currentPosts, setCurrentPosts] = useState([]);
   const [page, setPage] = useState(1);
@@ -114,6 +116,19 @@ function Performances() {
     setImagePreview(post.image_url);
   };
   //공연 예정 일자나 장소, 모집하는 팀 수, 한 팀당 곡 수등을 적어주시면 좋아요!
+  
+  const handleDeleteClick = async (post) => {
+    if (window.confirm("게시글을 삭제하시겠습니까?")) {
+      try {
+        await instance.delete(`/posts2/${post.post_id}`);
+        await fetchPosts();
+  
+        window.confirm("게시글이 삭제되었습니다!")
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
+    }
+  };
   return (
     <div>
       <div className="BoardPage">
@@ -211,7 +226,10 @@ function Performances() {
                             >
                               <img src="/img/edit.png" alt="edit" />
                             </button>
-                            <button>
+                            <button onClick={(e) => {
+                                e.preventDefault();
+                                handleDeleteClick(post);
+                              }}>
                               <img src="/img/trash.png" alt="trash" />
                             </button>
                           </div>

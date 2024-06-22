@@ -11,7 +11,7 @@
   display: flex;
 }
 .ClubsDetailimg {
-  height: 470px;
+  max-height: 470px;
   margin-left: 20px;
   margin-top: 10px;
   border-radius: 20px;
@@ -63,6 +63,7 @@
 .DetailText {
   font-size: 20px;
   margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 hr {

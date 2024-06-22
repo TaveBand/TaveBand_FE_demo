@@ -86,7 +86,18 @@ function PRDetail() {
       console.error("Error submitting post:", error);
     }
   };
-
+  const handleDeleteClick = async (post) => {
+    if (window.confirm("게시글을 삭제하시겠습니까?")) {
+      try {
+        await instance.delete(`/posts3/${post.post_id}`);
+        await getDetail();
+        navigate("/boards/pr")
+        window.confirm("게시글이 삭제되었습니다!")
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
+    }
+  };
   return (
     <div className="BoardPage">
       <Header />
@@ -174,7 +185,10 @@ function PRDetail() {
                         <button onClick={handleEditClick}>
                           <img src="/img/edit.png" alt="edit" />
                         </button>
-                        <button>
+                        <button onClick={(e) => {
+                                e.preventDefault();
+                                handleDeleteClick(detail);
+                              }}>
                           <img src="/img/trash.png" alt="trash" />
                         </button>
                       </div>

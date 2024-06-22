@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import instance from "./axios";
-import { Link, useParams } from "react-router-dom";
+// import axios from 'axios';
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import BoardBtns from "../components/BoardBtns";
 import Pagenumber from "../components/Pagenumber";
 import "./Clubs.css";
 
 function Clubs() {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [coverimages, setCoverImages] = useState();
   const [currentPosts, setCurrentPosts] = useState([]);
@@ -31,7 +33,7 @@ function Clubs() {
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const res = await instance.get("/posts");
+      const res = await instance.get("/dailband/boards/clubs");
       setPosts(res.data.posts);
       setCurrentPosts(res.data.posts.slice(IndexFirstPost, IndexLastPost));
     } catch (error) {
@@ -46,19 +48,21 @@ function Clubs() {
   }, [IndexFirstPost, IndexLastPost, page]);
 
   useEffect(() => {
-    async function getcoverimages(post_id) {
-      setLoading(true);
-      try {
-        const res = await instance.get(`/posts_1/${post_id}`);
-        setCoverImages(res.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching post coverimages:", error);
-        setLoading(false);
+    if (post_id) {
+      async function getcoverimages(post_id) {
+        setLoading(true);
+        try {
+          const res = await instance.get(`/dailband/boards/clubs/posts/${post_id}`);
+          setCoverImages(res.data);
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching post coverimages:", error);
+          setLoading(false);
+        }
       }
+      getcoverimages(post_id);
     }
-    getcoverimages(post_id);
-  }, []);
+  }, [post_id]);
 
   const handleWriteClick = () => {
     setIsWriting(true); // 글 작성
@@ -108,7 +112,7 @@ function Clubs() {
     const updatedPost = {
       title,
       content,
-      file_url: imagePreview,
+      file_url: "",
     };
 
     try {
@@ -134,6 +138,19 @@ function Clubs() {
     setContent(post.content);
     setImage(null);
     setImagePreview(post.image_url);
+  };
+
+  const handleDeleteClick = async (post) => {
+    if (window.confirm("게시글을 삭제하시겠습니까?")) {
+      try {
+        await instance.delete(`/posts/${post.post_id}`);
+        await fetchPosts();
+       
+        window.confirm("게시글이 삭제되었습니다!")
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
+    }
   };
 
   return (
@@ -204,7 +221,11 @@ function Clubs() {
               <button
                 className="WriteBtn"
                 onClick={handleWriteClick}
-                style={{ marginLeft: "1270px", marginTop: "400px" , cursor:"pointer"}}
+                style={{
+                  marginLeft: "1270px",
+                  marginTop: "400px",
+                  cursor: "pointer",
+                }}
               >
                 글쓰기
               </button>
@@ -242,7 +263,13 @@ function Clubs() {
                             >
                               <img src="/img/edit.png" alt="edit" />
                             </button>
-                            <button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleDeleteClick(post);
+                              }}
+                            >
                               <img src="/img/trash.png" alt="trash" />
                             </button>
                           </div>
