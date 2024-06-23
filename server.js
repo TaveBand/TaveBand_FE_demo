@@ -1,6 +1,12 @@
 const express = require("express");
+// import express from "express";
+// import cors from "cors";
 const cors = require("cors");
+// import bodyParser from "body-parser";
 const bodyParser = require("body-parser");
+// import { Login } from "./src/routes/Login.js"
+// const { default: Login } = require("./src/routes/Login");
+const session = require("express-session");
 
 const app = express();
 const port = 5000;
@@ -8,7 +14,122 @@ const port = 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
+//로그인 정보 저장 
+const users = [
+  { id: 1, username: '윤영선', password: '0000', nickname: 'yys', email: 'yys@example.com', sessions: [{ session_info: '드럼' }] },
+  { id: 2, username: '김시은', password: '1111', nickname: 'kse', email: 'kse@example.com', sessions: [{ session_info: '기타' }] },
+];
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+}));
+// 로그인 API
+app.post('/dailband/login', (req, res) => {
+  const { username, password } = req.body;
+  const user = users.find(u => u.username === username && u.password === password);
+
+  if (user) {
+    req.session.userId = user.id;
+    res.status(200).json({ message: 'Login successful', userId: user.id });
+  } else {
+    res.status(401).json({ message: 'Unauthorized: Invalid username or password' });
+  }
+});
+// 프로필 조회 API
+app.get('/dailband/user/:user_id/profile', (req, res) => {
+  const userId = parseInt(req.params.user_id, 10);
+  const user = users.find(u => u.id === userId);
+
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+});
+// 프로필 수정 API
+app.put('/dailband/user/:user_id/profile', (req, res) => {
+  const userId = parseInt(req.params.user_id, 10);
+  const userIndex = users.findIndex(u => u.id === userId);
+
+  if (userIndex !== -1) {
+    const updatedUser = {
+      ...users[userIndex],
+      ...req.body,
+    };
+    users[userIndex] = updatedUser;
+    res.status(200).json({ message: 'Profile updated successfully' });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+});
+//스크랩한 공연 정보 API
+app.get('/dailband/user/:user_id/scraps/myperformances', (req, res) => {
+  const userId = parseInt(req.params.user_id, 10);
+  const user = users.find(u => u.id === userId);
+
+  if (user) {
+    // 예제 데이터
+    const scrapPerformances = [
+      {
+        performance_id: 1,
+        title: "블랙테트라",
+        image_path: "path/to/image1.png"
+      },
+      {
+        performance_id: 2,
+        title: "[서울과기대/개망나니] 개그 공연",
+        image_path: "path/to/image2.jpg"
+      }
+    ];
+    res.status(200).json({ scrap_performance: scrapPerformances });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+});
+
+
+//스크랩한 게시글 정보 API
+app.get('/dailband/user/:user_id/scraps/posts', (req, res) => {
+  const userId = parseInt(req.params.user_id, 10);
+  const user = users.find(u => u.id === userId);
+
+  if (user) {
+    // 예제 데이터
+    const scrapPosts = [
+      {
+        post: {
+          post_id: 1,
+          title: "세션 게시판",
+          content: "키보드 악보 연주하려고 하는데 중급자를 위한 곡을 추천해주세요",
+          nickname: user.nickname,
+          created_at: "2024.05.17"
+        }
+      },
+      {
+        post: {
+          post_id: 2,
+          title: "세션 게시판",
+          content: "보컬 노래 연습 영상입니다",
+          nickname: user.nickname,
+          created_at: "2024.05.18"
+        }
+      }
+    ];
+    res.status(200).json({ scrap_post: scrapPosts });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+});
+
+
+
+
 //모집 페이지 - 동아리 모집
+
 const posts1 = [
   {
     post_id: 1,
@@ -926,8 +1047,74 @@ const posts9 = [
     comments: []
   },
 ];
-let posts = [...posts1, ...posts2, ...posts3];
+const Logindata = [{username:"tldms", password:"tldms"}]
+const myposts = [
+  {
+    id: 1,
+    category: "세션 게시판",
+    title: "키보드 악보 연주하라고 하는데 중급자를 위한 곡을 추천해주세요",
+    content: "안녕하세요. 루시의 개화를 연주하고 싶은데 중급자 수준의 악보는 어떤게 좋을지 추천해주세요 여러분!",
+    author: "윤영선",
+    date: "2024.05.17",
+    likes: 137,
+    comments: 2
+  },
+  {
+    id: 2,
+    category: "세션 게시판",
+    title: "보컬 노래 연습 영상입니다",
+    content: "열심히 연습했는데 어떻게 해야 더 잘 부를 수 있을까요?",
+    author: "윤영선",
+    date: "2024.05.18",
+    likes: 137,
+    comments: 2
+  },
+  {
+    id: 3,
+    category: "동아리 게시판",
+    title: "대일밴드 베이스와 기타 실력자 분들 모집합니다~!",
+    content: "저희 밴드와 함께할 베이스와 기타실력자분들을 모집합니다. 물론 열정 가득하신 분들도 언제든 환영합니다!",
+    author: "윤영선",
+    date: "2024.05.20",
+    likes: 137,
+    comments: 2
+  },
+  {
+    id: 4,
+    category: "연합 공연 모집 게시판",
+    title: "저희 밴드와 함께할 공연팀을 찾습니다!",
+    content: "저희팀과 연합할 공연팀을 찾습니다. 3팀정도 모여서 같이 재밌게 해봐요!",
+    author: "윤영선",
+    date: "2024.05.23",
+    likes: 137,
+    comments: 2
+  }
+]
 
+const scrap = [
+  {
+    id: 1,
+    title: "[서울과기대/개망나니] 개막 콘서트",
+    description: "서울과기대 개막 콘서트에 오신 것을 환영합니다!",
+    image: "/img/image 6.png"
+  },
+  {
+    id: 2,
+    title: "블랙테트라",
+    description: "블랙테트라 콘서트입니다.",
+    image:  "/img/image 7.png"
+  },
+  {
+    id: 3,
+    title: "[서울과기대/개망나니] 개막 콘서트",
+    description: "서울과기대 개막 콘서트에 오신 것을 환영합니다!",
+    image:  "/img/image 4.png"
+  }
+]
+
+// let posts = [...posts1, ...posts2, ...posts3];
+
+let posts = [...posts1, ...posts2, ...posts3, ...posts5,...Logindata, ...myposts, ...scrap];
 app.use(express.json());
 
 app.get("/posts", (req, res) => {
@@ -981,6 +1168,7 @@ app.get("/posts5/:post_id", (req, res) => {
 });
 
 //게시판에 따른 게시물 조회
+
 app.post("/posts", (req, res) => {
   const newPost = req.body;
   posts.push(newPost);
@@ -1008,6 +1196,14 @@ app.get(`/posts8`, (req, res) => {
 });
 app.get(`/posts9`, (req, res) => {
   res.json({ posts: posts9 });
+});
+
+app.get(`/myposts`, (req, res) => {
+  res.json({ posts: myposts });
+});
+
+app.get(`/scrap`, (req, res) => {
+  res.json({ posts: scrap });
 });
 
 //댓글 추가
